@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { isEmail, isNotEmpty, isSiret } from "../../../utilities/validation";
 
 const useCreateCustomer = (
   name: string,
@@ -7,29 +8,20 @@ const useCreateCustomer = (
   email: string,
   submit: boolean,
 ) => {
-  const [fetchedDatas, setFetchedDatas] = useState({
-    name: name,
-    siret: siret,
-    address: address,
-    email: email,
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  // si je l'utilise il y a top de re render. POURQUOI ?
-  // setFetchedDatas((prevDatas) => ({
-  //   ...prevDatas,
-  //   name: name,
-  //   siret: siret,
-  //   address: address,
-  //   email: email,
-  // }));
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<string>("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  console.log("useeffect");
   useEffect(() => {
+    const fetchedDatas = {
+      name: name,
+      siret: siret,
+      address: address,
+      email: email,
+    };
+
     async function fetchData() {
-      setLoading(true);
+      setIsLoading(true);
 
       try {
         const response = await fetch("https://example.org/post", {
@@ -45,28 +37,38 @@ const useCreateCustomer = (
         if (!response.ok) {
           //const error = new Error("Failde to create customer");
           //throw error;
-          setIsError(true);
-          setLoading(false);
+          setIsError("l'enregistrement n'est pas possible");
+          setIsLoading(false);
         } else {
-          setSuccess(true);
+          setIsSuccess(true);
         }
-        setLoading(false);
+        setIsLoading(false);
         return res.message;
       } catch (error) {
-        setIsError(true);
-        setLoading(false);
+        setIsError(error.message);
+        setIsLoading(false);
       }
     }
+
     if (submit) {
-      fetchData();
+      if (
+        isSiret(siret) &&
+        isEmail(email) &&
+        isNotEmpty(name) &&
+        isNotEmpty(address)
+      ) {
+        fetchData();
+      } else {
+        console.log("pas ok ");
+        setIsError("Vérifiez le contenu des champs ");
+      }
     }
-  }, [fetchedDatas, submit]);
+  }, [submit, address, email, name, siret]);
 
   return {
-    loading,
-    fetchedDatas,
+    isLoading,
     isError,
-    success,
+    isSuccess,
   };
 };
 

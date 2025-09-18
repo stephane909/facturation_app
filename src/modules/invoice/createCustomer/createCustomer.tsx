@@ -1,117 +1,67 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import useCreateCustomer from "./useCreateCustomer";
-import { isEmail, isSiret, isNotEmpty } from "../../../utilities/validation";
 
 const CreateCustomer = () => {
-  // State de stockage des champs
-  const [enteredName, setEnteredName] = useState("");
-  const [enteredSiret, setEnteredSiret] = useState("");
-  const [enteredAddress, setEnteredAddress] = useState("");
-  const [enteredEmail, setEnteredEmail] = useState("");
+  const name = useRef<HTMLInputElement>("");
+  const siret = useRef<HTMLInputElement | null>("");
+  const address = useRef<HTMLInputElement | null>("");
+  const email = useRef<HTMLInputElement | null>("");
+
   const [dataToSubmission, setDataToSubmission] = useState(false);
-  const [dataError, setDataError] = useState(false);
-  const { loading, fetchedDatas, isError, success } = useCreateCustomer(
-    enteredName,
-    enteredSiret,
-    enteredAddress,
-    enteredEmail,
+
+  const { isLoading, isError, isSuccess } = useCreateCustomer(
+    name.current.value,
+    siret.current.value,
+    address.current.value,
+    email.current.value,
     dataToSubmission,
   );
 
-  function handleNameChange(value) {
-    setEnteredName(value);
-  }
-
-  function handleSiretChange(value) {
-    setEnteredSiret(value);
-  }
-
-  function handleAddressChange(value) {
-    setEnteredAddress(value);
-  }
-
-  function handleEmailChange(value) {
-    setEnteredEmail(value);
-  }
+  //réinitialise la soumission du formulaire
+  useEffect(() => {
+    if (dataToSubmission === true) {
+      setDataToSubmission(false);
+    }
+  }, [dataToSubmission]);
 
   // #FACTURATION-US-1-AC-1 : création client validée
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-
-    if (
-      isSiret(enteredSiret) &&
-      isEmail(enteredEmail) &&
-      isNotEmpty(enteredName) &&
-      isNotEmpty(enteredAddress)
-    ) {
-      setDataToSubmission(true);
-      setDataError(false);
-    } else {
-      setDataToSubmission(false);
-      setDataError(true);
-    }
+    setDataToSubmission(true);
   };
 
   return (
     <>
-      <p>Nouveau Client</p>
-      {success && <span>{fetchedDatas.name} ajouté !</span>}
-      {!success && (
+      <h2>Nouveau Client</h2>
+      {isSuccess && <span>{name.current.value} ajouté !</span>}
+      {!isSuccess && (
         <form onSubmit={() => handleSubmit(event)}>
           <div>
             <label htmlFor="name">Nom</label>
             <br />
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="none"
-              onBlur={(event) => handleNameChange(event.target.value)}
-            />
+            <input name="name" type="text" ref={name} />
           </div>
           <div>
             <label htmlFor="siret">N° de Siret</label>
             <br />
-            <input
-              id="siret"
-              name="siret"
-              type="number"
-              autoComplete="none"
-              onBlur={(event) => handleSiretChange(event.target.value)}
-            />
+            <input name="siret" type="number" ref={siret} />
           </div>
           <div>
             <label htmlFor="address">Adresse, CP, Ville</label>
             <br />
-            <input
-              id="address"
-              name="address"
-              type="text"
-              autoComplete="none"
-              onBlur={(event) => handleAddressChange(event.target.value)}
-            />
+            <input name="address" type="text" ref={address} />
           </div>
           <div>
             <label htmlFor="email">eMail</label>
             <br />
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="none"
-              onBlur={(event) => handleEmailChange(event.target.value)}
-            />
+            <input name="email" type="email" ref={email} />
           </div>
           <div>
             <br />
             <input type="submit" value="save" />
-            {dataError && (
-              <span>veuillez vérifier la confirmité de votre saisie</span>
-            )}
-            {loading && <span>Enregistrement en cours</span>}
-            {isError && (
-              <span>Une erreur sn'est produite lors de l'enregistrement </span>
-            )}
+
+            {isLoading && <span>Enregistrement en cours</span>}
+            {isError && <span>{isError}</span>}
           </div>
         </form>
       )}
