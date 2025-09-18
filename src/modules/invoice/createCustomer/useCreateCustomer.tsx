@@ -11,7 +11,7 @@ const useCreateCustomer = (
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  console.log("useeffect");
+
   useEffect(() => {
     const fetchedDatas = {
       name: name,
