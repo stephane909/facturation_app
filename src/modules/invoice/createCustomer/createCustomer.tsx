@@ -3,11 +3,11 @@ import useCreateCustomer from "./useCreateCustomer";
 
 const CreateCustomer = () => {
   const name = useRef<HTMLInputElement>("");
-  const siret = useRef<HTMLInputElement | null>("");
-  const address = useRef<HTMLInputElement | null>("");
-  const email = useRef<HTMLInputElement | null>("");
+  const siret = useRef<HTMLInputElement>("");
+  const address = useRef<HTMLInputElement>("");
+  const email = useRef<HTMLInputElement>("");
 
-  const [dataToSubmission, setDataToSubmission] = useState(false);
+  const [dataToSubmission, setDataToSubmission] = useState<boolean>(false);
 
   const { isLoading, isError, isSuccess } = useCreateCustomer(
     name.current.value,
@@ -24,11 +24,18 @@ const CreateCustomer = () => {
     }
   }, [dataToSubmission]);
 
-  // #FACTURATION-US-1-AC-1 : création client validée
   const handleSubmit = (event) => {
     event.preventDefault();
     setDataToSubmission(true);
   };
+
+  let message: string = "";
+
+  if (isLoading && !isError) {
+    message = "Enregistrement en cours";
+  } else if (isError) {
+    message = isError;
+  }
 
   return (
     <>
@@ -59,9 +66,7 @@ const CreateCustomer = () => {
           <div>
             <br />
             <input type="submit" value="save" />
-
-            {isLoading && <span>Enregistrement en cours</span>}
-            {isError && <span>{isError}</span>}
+            {message && <span>{message}</span>}
           </div>
         </form>
       )}
