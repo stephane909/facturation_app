@@ -1,67 +1,52 @@
-import { useState, useRef, useEffect } from "react";
 import useCreateCustomer from "./useCreateCustomer";
 
 const CreateCustomer = () => {
-  const name = useRef<HTMLInputElement>("");
-  const siret = useRef<HTMLInputElement>("");
-  const address = useRef<HTMLInputElement>("");
-  const email = useRef<HTMLInputElement>("");
-
-  const [dataToSubmission, setDataToSubmission] = useState<boolean>(false);
-
-  const { isLoading, isError, isSuccess } = useCreateCustomer(
-    name.current.value,
-    siret.current.value,
-    address.current.value,
-    email.current.value,
-    dataToSubmission,
-  );
-
-  //réinitialise la soumission du formulaire
-  useEffect(() => {
-    if (dataToSubmission === true) {
-      setDataToSubmission(false);
-    }
-  }, [dataToSubmission]);
+  const { isLoading, error, isSuccess, fetchCreateCustomer } =
+    useCreateCustomer();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setDataToSubmission(true);
+
+    const nameValue = event.target.name.value;
+    const siretValue = event.target.siret.value;
+    const addressValue = event.target.address.value;
+    const emailValue = event.target.email.value;
+    fetchCreateCustomer(nameValue, siretValue, addressValue, emailValue);
   };
 
   let message: string = "";
 
-  if (isLoading && !isError) {
+  if (isLoading && !error) {
     message = "Enregistrement en cours";
-  } else if (isError) {
-    message = isError;
+  } else if (error) {
+    message = error;
   }
 
   return (
     <>
       <h2>Nouveau Client</h2>
-      {isSuccess && <span>{name.current.value} ajouté !</span>}
+      {isSuccess && <span>Client ajouté !</span>}
       {!isSuccess && (
         <form onSubmit={() => handleSubmit(event)}>
           <div>
             <label htmlFor="name">Nom</label>
             <br />
-            <input name="name" type="text" ref={name} />
+            <input name="name" type="text" />
           </div>
           <div>
             <label htmlFor="siret">N° de Siret</label>
             <br />
-            <input name="siret" type="number" ref={siret} />
+            <input name="siret" type="number" />
           </div>
           <div>
             <label htmlFor="address">Adresse, CP, Ville</label>
             <br />
-            <input name="address" type="text" ref={address} />
+            <input name="address" type="text" />
           </div>
           <div>
             <label htmlFor="email">eMail</label>
             <br />
-            <input name="email" type="email" ref={email} />
+            <input name="email" type="email" />
           </div>
           <div>
             <br />

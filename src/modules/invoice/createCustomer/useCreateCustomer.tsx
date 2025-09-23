@@ -1,74 +1,68 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { isEmail, isNotEmpty, isSiret } from "../../../utilities/validation";
 
-const useCreateCustomer = (
-  name: string,
-  siret: string,
-  address: string,
-  email: string,
-  submit: boolean,
-) => {
+const useCreateCustomer = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchedDatas = {
-      name: name,
-      siret: siret,
-      address: address,
-      email: email,
-    };
+  async function fetchCreateCustomer(
+    name: string,
+    siret: string,
+    address: string,
+    email: string,
+  ) {
+    setIsLoading(true);
 
-    async function fetchData() {
-      setIsLoading(true);
-
-      try {
-        const response = await fetch("https://example.org/post", {
-          method: "POST",
-          body: JSON.stringify(fetchedDatas),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const res = await response.json();
-
-        if (!response.ok) {
-          //const error = new Error("Failde to create customer");
-          //throw error;
-          setIsError("l'enregistrement n'est pas possible");
-          setIsLoading(false);
-        } else {
-          setIsSuccess(true);
-        }
-        setIsLoading(false);
-        return res.message;
-      } catch (error) {
-        setIsError(error.message);
-        setIsLoading(false);
-      }
+    //on test si tous les champs sont conforments
+    if (!isSiret(siret)) {
+      setError("Le siret doit contenir 14 chiffres");
+      return;
+    } else if (!isEmail(email)) {
+      setError("L'email est invalide");
+      return;
+    } else if (!isNotEmpty(name)) {
+      setError("Le nom est vide");
+      return;
+    } else if (!isNotEmpty(address)) {
+      setError("L'adresse est vide");
+      return;
     }
 
-    if (submit) {
-      if (
-        isSiret(siret) &&
-        isEmail(email) &&
-        isNotEmpty(name) &&
-        isNotEmpty(address)
-      ) {
-        fetchData();
+    const customerDatas = { name, siret, address, email };
+
+    try {
+      const response = await fetch("https://example.org/post", {
+        method: "POST",
+        body: JSON.stringify(customerDatas),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const res = await response.json();
+
+      if (!response.ok) {
+        //const error = new Error("Failde to create customer");
+        //throw error;
+        setError("l'enregistrement n'est pas possible");
+        setIsLoading(false);
       } else {
-        console.log("pas ok ");
-        setIsError("Vérifiez le contenu des champs ");
+        setIsSuccess(true);
       }
+      setIsLoading(false);
+      return res.message;
+    } catch (e) {
+      setError(e.message);
+      setIsLoading(false);
     }
-  }, [submit, address, email, name, siret]);
+  }
 
   return {
     isLoading,
-    isError,
+    error,
     isSuccess,
+    fetchCreateCustomer,
   };
 };
 
