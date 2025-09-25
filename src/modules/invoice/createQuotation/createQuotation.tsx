@@ -2,15 +2,6 @@ import { useState } from "react";
 import useCreateQuotation from "./useCreateQuotation";
 
 const CreateQuotation = () => {
-  //On stockl ici toutes les Prestations, Le devis comporte au moins une prestation,
-  // donc on en crée d'office une par défaut
-  const [prestationsList, setPrestationsList] = useState([
-    {
-      id: 1,
-      name: "default",
-    },
-  ]);
-
   //J'ai mis un useState pour anticiper le changement d'état du devis.
   // False = brouillon - True = Enregistré
   // A voir si on garde ça, je pense qu'il y aua d'autres états, comme "validé"
