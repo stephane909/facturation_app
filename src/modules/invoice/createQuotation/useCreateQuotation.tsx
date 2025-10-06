@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { isNotEmpty } from "../../../utilities/validation";
+import { addQuotation } from "./useCreateQuotationRepository";
 
 const useCreateQuotation = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,26 +29,16 @@ const useCreateQuotation = () => {
     const quotationDatas = { customer, date, name, status };
 
     try {
-      const response = await fetch("https://example.org/post", {
-        method: "POST",
-        body: JSON.stringify(quotationDatas),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const res = await response.json();
+      const response = await addQuotation(quotationDatas);
 
       if (!response.ok) {
-        //const error = new Error("Failde to create customer");
-        //throw error;
         setError("l'enregistrement n'est pas possible");
         setIsLoading(false);
       } else {
         setIsSuccess(true);
       }
       setIsLoading(false);
-      return res.message;
+      return response.message;
     } catch (e) {
       setError(e.message);
       setIsLoading(false);

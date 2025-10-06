@@ -31,22 +31,22 @@ const CreateCustomer = () => {
           <div>
             <label htmlFor="name">Nom</label>
             <br />
-            <input name="name" type="text" />
+            <input id="name" name="name" type="text" />
           </div>
           <div>
             <label htmlFor="siret">N° de Siret</label>
             <br />
-            <input name="siret" type="number" />
+            <input id="siret" name="siret" type="number" />
           </div>
           <div>
             <label htmlFor="address">Adresse, CP, Ville</label>
             <br />
-            <input name="address" type="text" />
+            <input id="address" name="address" type="text" />
           </div>
           <div>
             <label htmlFor="email">eMail</label>
             <br />
-            <input name="email" type="email" />
+            <input id="email" name="email" type="email" />
           </div>
           <div>
             <br />

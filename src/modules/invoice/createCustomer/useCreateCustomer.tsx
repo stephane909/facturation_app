@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { addCustomer } from "./useCreateCustomerRepository";
 import { isEmail, isNotEmpty, isSiret } from "../../../utilities/validation";
 
 const useCreateCustomer = () => {
@@ -32,15 +33,7 @@ const useCreateCustomer = () => {
     const customerDatas = { name, siret, address, email };
 
     try {
-      const response = await fetch("https://example.org/post", {
-        method: "POST",
-        body: JSON.stringify(customerDatas),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const res = await response.json();
+      const response = await addCustomer(customerDatas);
 
       if (!response.ok) {
         //const error = new Error("Failde to create customer");
@@ -51,7 +44,8 @@ const useCreateCustomer = () => {
         setIsSuccess(true);
       }
       setIsLoading(false);
-      return res.message;
+      //return res.message;
+      return response.message;
     } catch (e) {
       setError(e.message);
       setIsLoading(false);
