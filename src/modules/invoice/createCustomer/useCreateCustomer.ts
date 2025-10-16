@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addCustomer } from "./useCreateCustomerRepository";
+import createCustomerRepository from "./createCustomerRepository";
 import { isEmail, isNotEmpty, isSiret } from "../../../utilities/validation";
 
 const useCreateCustomer = () => {
@@ -33,7 +33,8 @@ const useCreateCustomer = () => {
     const customerDatas = { name, siret, address, email };
 
     try {
-      const response = await addCustomer(customerDatas);
+      const newCustomer = new createCustomerRepository();
+      const response = await newCustomer.execute(customerDatas);
 
       if (!response.ok) {
         //const error = new Error("Failde to create customer");

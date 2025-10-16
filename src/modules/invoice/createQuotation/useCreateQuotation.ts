@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { isNotEmpty } from "../../../utilities/validation";
-import { addQuotation } from "./useCreateQuotationRepository";
+import createQuotationRepository from "./createQuotationRepository";
 
 const useCreateQuotation = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,7 +29,9 @@ const useCreateQuotation = () => {
     const quotationDatas = { customer, date, name, status };
 
     try {
-      const response = await addQuotation(quotationDatas);
+      const newQuotation = new createQuotationRepository();
+
+      const response = await newQuotation.execute(quotationDatas);
 
       if (!response.ok) {
         setError("l'enregistrement n'est pas possible");
@@ -37,6 +39,7 @@ const useCreateQuotation = () => {
       } else {
         setIsSuccess(true);
       }
+
       setIsLoading(false);
       return response.message;
     } catch (e) {

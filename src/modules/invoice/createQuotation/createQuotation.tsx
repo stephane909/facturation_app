@@ -1,35 +1,10 @@
-import { useState, useEffect } from "react";
+import GetCustomers from "../getCustomers/getCustomers";
 import useCreateQuotation from "./useCreateQuotation";
 import CreatePrestation from "../createPrestation/createPrestation";
-import { getCustomer } from "../createCustomer/useCreateCustomerRepository";
-
-interface Customer {
-  id: number;
-  name: string;
-  siret: number;
-  address: string;
-  email: string;
-}
-
-type Customers = Array<Customer>;
 
 const CreateQuotation = () => {
-  const [customers, setCustomers] = useState<Customers>([]);
   const { isLoading, error, isSuccess, fetchCreateQuotation } =
     useCreateQuotation();
-
-  //Chargement du select customers
-  useEffect(() => {
-    async function getCustomersList() {
-      try {
-        const response = await getCustomer();
-        setCustomers(response);
-      } catch (e) {
-        throw e.message;
-      }
-    }
-    getCustomersList();
-  }, []);
 
   //envoie les datas pour la creation du devis
   const handleSubmit = (event) => {
@@ -56,18 +31,7 @@ const CreateQuotation = () => {
           <p>
             <label htmlFor="client">
               Client :
-              <select id="client" name="client" defaultValue="0">
-                <option key={0} value="0">
-                  Sélectionnez un client
-                </option>
-                {customers.map((customer) => {
-                  return (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.name}
-                    </option>
-                  );
-                })}
-              </select>
+              <GetCustomers />
             </label>
           </p>
           <p>
