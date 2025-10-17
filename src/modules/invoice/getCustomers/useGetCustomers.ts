@@ -1,6 +1,5 @@
 import { useState } from "react";
-import getCustomers from "./getCustomersRepository";
-//import getCustomersRepository from "./getCustomersRepository";
+import getCustomersRepository from "./getCustomersRepository";
 
 interface Customer {
   id: number;
@@ -19,14 +18,11 @@ const useGetCustomers = () => {
   const [customers, setCustomers] = useState<Customers>([]);
 
   const fetchGetCustomers = async () => {
-    setIsLoading(true);
     try {
+      const getCustomers = new getCustomersRepository();
+      const response = await getCustomers.execute();
+
       //const response = await getCustomers();
-
-      // const getCustomers = new getCustomersRepository();
-      // const response = getCustomers.execute();
-
-      const response = await getCustomers();
 
       if (!response.ok) {
         setError("l'enregistrement n'est pas possible");
@@ -41,6 +37,7 @@ const useGetCustomers = () => {
       setIsLoading(false);
     }
     setIsLoading(false);
+
     return customers;
   };
 

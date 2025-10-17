@@ -23,7 +23,7 @@ const GetCustomers = () => {
     }
 
     getCustomersList();
-  }, [fetchGetCustomers]);
+  }, [fetchGetCustomers, customers]);
 
   let message: string = "";
 

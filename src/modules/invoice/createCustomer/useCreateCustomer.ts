@@ -37,15 +37,13 @@ const useCreateCustomer = () => {
       const response = await newCustomer.execute(customerDatas);
 
       if (!response.ok) {
-        //const error = new Error("Failde to create customer");
-        //throw error;
         setError("l'enregistrement n'est pas possible");
         setIsLoading(false);
       } else {
         setIsSuccess(true);
       }
       setIsLoading(false);
-      //return res.message;
+
       return response.message;
     } catch (e) {
       setError(e.message);
